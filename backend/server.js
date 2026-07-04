@@ -16,10 +16,10 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 app.use(cors({ origin: [FRONTEND_URL, 'http://localhost:5173'] }));
 app.use(express.json());
 
-// Serve static frontend build in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'public')));
-}
+// Health check endpoint for the root path
+app.get('/', (req, res) => {
+  res.send('Family Link API is running');
+});
 
 const io = new Server(server, {
   cors: {
@@ -56,12 +56,7 @@ app.get('/api/room/:code', (req, res) => {
   res.json({ exists: true, full: userCount >= MAX_ROOM_SIZE, userCount });
 });
 
-// Catch-all for SPA in production
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  });
-}
+
 
 // ── Socket.IO ────────────────────────────────────────
 io.on('connection', (socket) => {
