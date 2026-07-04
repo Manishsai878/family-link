@@ -2,6 +2,38 @@
 
 Private voice & text chat for two people. Works over the internet on any device with Chrome.
 
+> [!NOTE]
+> ### 🤖 AI Context & System Overview
+> *This section is optimized for AI assistants to instantly parse the project's purpose, design patterns, and codebase layout.*
+>
+> #### 1. Core Product & Flow
+> - **Purpose:** A Progressive Web App (PWA) for direct, private communication (real-time chat and WebRTC voice calls) between exactly two users.
+> - **Authentication:** Zero database or authentication overhead. Session state is stored in localStorage. Connection is established by sharing a random 6-character room code.
+> - **Capacity:** Strictly 2 users per room code. Rooms automatically clean up 1 hour after all users disconnect.
+>
+> #### 2. Codebase Architecture
+> - **Frontend (React + Vite in `/frontend`):**
+>   - **Styling:** Premium, minimalist iOS-style dark mode styling inside [App.css](file:///c:/Users/manip/OneDrive/Desktop/family-link/frontend/src/App.css) (no Tailwind).
+>   - **PWA Configuration:** Service workers and offline manifest handled via `vite-plugin-pwa` in [vite.config.js](file:///c:/Users/manip/OneDrive/Desktop/family-link/frontend/vite.config.js).
+>   - **Real-time / WebRTC Hook:** [useSocket.js](file:///c:/Users/manip/OneDrive/Desktop/family-link/frontend/src/hooks/useSocket.js) handles all connection lifecycles, message streams, RTCPeerConnection signaling (offer/answer/ice-candidate), and microphone access.
+> - **Backend (Node.js + Express + Socket.IO in `/backend`):**
+>   - **State:** In-memory `rooms` map tracking messages and socket IDs.
+>   - **Key file:** [server.js](file:///c:/Users/manip/OneDrive/Desktop/family-link/backend/server.js) runs the HTTP server, Socket.IO instance, WebRTC signaling events, and room code endpoints.
+>
+> #### 3. Production Deployment Strategy
+> - **Frontend Deployment (Vercel - Free Tier):**
+>   - Root Directory: `frontend`
+>   - Build Command: `npm run build`
+>   - Output Directory: `dist`
+>   - Environment Variables: `VITE_SERVER_URL` points to the Render backend URL.
+> - **Backend Deployment (Render - Web Service):**
+>   - Root Directory: `backend`
+>   - Build Command: `npm install`
+>   - Start Command: `npm start`
+>   - Environment Variables: `FRONTEND_URL` points to the Vercel frontend URL.
+>   - Health check: Endpoint `GET /` is implemented as a simple API health check returning `Family Link API is running` (preventing ENOENT errors on health checks).
+
+
 ## How It Works
 
 1. One person **creates a room** → gets a 6-character code
