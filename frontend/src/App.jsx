@@ -4,7 +4,7 @@ import JoinRoom from './components/JoinRoom';
 import Chat from './components/Chat';
 import CallScreen from './components/CallScreen';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
 export default function App() {
   const [session, setSession] = useState(null); // { roomCode, userName }
