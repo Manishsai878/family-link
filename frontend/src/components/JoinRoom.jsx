@@ -14,12 +14,14 @@ export default function JoinRoom({ serverUrl, onJoin }) {
     setError('');
     try {
       const res = await fetch(`${serverUrl}/api/room`, { method: 'POST' });
+      if (!res.ok) throw new Error('Response not OK');
       const data = await res.json();
       setCreatedCode(data.code);
       setMode('created');
       setLoading(false);
-    } catch {
-      setError('Could not reach server');
+    } catch (err) {
+      setError(`Could not reach server at: ${serverUrl || 'relative path'}`);
+      setMode(null);
       setLoading(false);
     }
   };
@@ -35,8 +37,9 @@ export default function JoinRoom({ serverUrl, onJoin }) {
       const data = await res.json();
       if (data.full) { setError('Room is full'); setLoading(false); return; }
       onJoin({ roomCode: roomCode.toUpperCase(), userName: name.trim() });
-    } catch {
-      setError('Could not reach server');
+    } catch (err) {
+      setError(`Could not reach server at: ${serverUrl || 'relative path'}`);
+      setMode(null);
       setLoading(false);
     }
   };
@@ -72,7 +75,7 @@ export default function JoinRoom({ serverUrl, onJoin }) {
               />
             </div>
             <div className="join-buttons">
-              <button className="btn-primary" onClick={() => { if(!name.trim()){setError('Enter your name');return;} setError(''); setMode('create'); handleCreate(); }}>
+              <button className="btn-primary" onClick={() => { if(!name.trim()){setError('Enter your name');return;} setError(''); handleCreate(); }} disabled={loading}>
                 Create Room
               </button>
               <button className="btn-secondary" onClick={() => { if(!name.trim()){setError('Enter your name');return;} setError(''); setMode('join'); }}>
