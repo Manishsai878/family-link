@@ -10,8 +10,14 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 3001;
 
-// In production, allow the deployed frontend origin; in dev, allow localhost
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const getSanitizedFrontendUrl = () => {
+  let url = process.env.FRONTEND_URL || 'http://localhost:5173';
+  if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+    url = `https://${url}`;
+  }
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+};
+const FRONTEND_URL = getSanitizedFrontendUrl();
 
 app.use(cors({ origin: [FRONTEND_URL, 'http://localhost:5173'] }));
 app.use(express.json());
